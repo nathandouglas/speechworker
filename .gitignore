@@ -1,0 +1,4 @@
+*pyc
+build/*
+dist/*
+speechworker.egg-info/*

@@ -2,20 +2,26 @@
 
 """
     speechworker.py
+    
+    data/svmSM is a pretrained model from `pyAudioAnalysis`
 """
 
-import audioBasicIO as aIO
-import audioFeatureExtraction as aF
-import audioTrainTest as aT
+import os
+import pyAudioAnalysis.audioBasicIO as aIO
+import pyAudioAnalysis.audioFeatureExtraction as aF
+import pyAudioAnalysis.audioTrainTest as aT
 
 class SpeechWorker(object):
-    
-    def __init__(self, model_name='data/svmSM', model_type='svm'):
-        assert(model_name == 'data/svmSM')
-        assert(model_type == 'svm')
+    model_type = 'svm'
+    def __init__(self, model_path=None):
+        assert(self.model_type == 'svm')
+        
+        if not model_path:
+            ppath = os.path.join(os.environ['HOME'], '.speechworker')
+            model_path = os.path.join(ppath, 'models/svmSM')
         
         [self.classifier, self.model_mean, self.model_sd, self.class_names, 
-            self.mt_win, self.mt_step, self.st_win, self.st_step, _] = aT.loadSVModel(model_name)
+            self.mt_win, self.mt_step, self.st_win, self.st_step, _] = aT.loadSVModel(model_path)
     
     def predict(self, input_file):
         (frame_rate, x) = aIO.readAudioFile(input_file)
@@ -32,7 +38,3 @@ class SpeechWorker(object):
         
         p = self.classifier.predict_proba(feats.reshape(1, -1))[0]
         return dict(zip(self.class_names, p))
-
-if __name__ == "__main__":
-    sw = SpeechWorker()
-    sw.predict("./data/speechEmotion/59.wav")
