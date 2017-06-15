@@ -23,7 +23,7 @@ class SpeechWorker(object):
         [self.classifier, self.model_mean, self.model_sd, self.class_names, 
             self.mt_win, self.mt_step, self.st_win, self.st_step, _] = aT.loadSVModel(model_path)
     
-    def predict(self, input_file):
+    def __call__(self, input_file):
         (frame_rate, x) = aIO.readAudioFile(input_file)
         [feats, s] = aF.mtFeatureExtraction(
             aIO.stereo2mono(x), 
