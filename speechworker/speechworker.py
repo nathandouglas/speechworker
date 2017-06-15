@@ -37,4 +37,9 @@ class SpeechWorker(object):
         feats = (feats - self.model_mean) / self.model_sd
         
         p = self.classifier.predict_proba(feats.reshape(1, -1))[0]
-        return dict(zip(self.class_names, p))
+        out = dict(zip(self.class_names, p))
+        out.update({
+            "_frame_rate" : frame_rate,
+            "_duraction_seconds" : float(x.shape[0]) / frame_rate
+        })
+        return out
